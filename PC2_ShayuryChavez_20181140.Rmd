@@ -1,0 +1,75 @@
+---
+title: "pc2"
+output: html_notebook
+---
+
+EJERCICIO 1
+  1.Primero, verificamos tener activo el paquete htmltab y creamos los objetos para extraer la data
+```{r}
+library(htmltab)
+link1= "https://www.cia.gov/library/publications/resources/the-world-factbook/fields/343.html"
+
+xpath= '//*[@id="fieldListing"]'
+  #Ojo usamos comillas simples para evitar problemas con el link 
+
+```
+  2.Creamos la data
+
+```{r}
+dataCIA= htmltab(doc =link1,
+               which =xpath)
+```
+
+  3.#Para saber cuantas filas y columnas tiene usamos el codigo str
+```{r}
+str(dataCIA)
+```
+
+Respuestas:
+Observamos que esta base de datos tiene 230 observaciones y 2 variables/columnas. Además, ambas variables son del tipo charactec/Caracter.
+
+EJERCICIO 2
+
+1.Crearemos una nueva columna con el promedio de edad total, el primer número de la coluna Median age
+
+```{r}
+##Primero le cambiamos el nombre a nuestra variables
+names(dataCIA)
+names(dataCIA)[names(dataCIA) == 'Median age'] <- 'Age'
+
+```
+
+```{r}
+
+str_split(string = dataCIA$Age, pattern = ' ',
+                        simplify = T)
+dataCIA$Promedio=str_split(string = dataCIA$Age, pattern = ' ',
+                        simplify = T)[,1]
+```
+2.sEGUIMOS LIMPIANDO
+
+```{r}
+str_split(string = dataCIA$Promedio, pattern = ':',
+                        simplify = T)[,2]
+dataCIA$Promedio=str_split(string = dataCIA$Promedio, pattern = ':',
+                        simplify = T)[,2]
+```
+
+3. Pasamo a numeric 
+```{r}
+dataCIA$Promedio=as.numeric(dataCIA$Promedio)
+#Verificamos
+str(dataCIA$Promedio)
+```
+
+EJERCICIO 3
+
+  1. Chequeamos si tenemos la library y usamos el comando summary
+
+```{r}
+library(DescTools)
+summary(dataCIA$Promedio)
+```
+
+  RESPUESTA
+  El valor mínimo de la variable Promedio es de 14.80, el máximo es de 55.40 y el promedio es de 31.55 años
